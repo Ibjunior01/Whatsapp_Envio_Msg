@@ -1,0 +1,19 @@
+# Ambiente virtual
+venv/
+
+# Cache Python
+__pycache__/
+*.pyc
+
+# VS Code
+.vscode/
+
+# Banco de dados local
+data/*.db
+
+# Logs
+*.log
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
