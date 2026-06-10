@@ -32,7 +32,7 @@ class Database:
             telefone TEXT NOT NULL UNIQUE,
             empresa TEXT,
             observacoes TEXT,
-            criado_em DATATIME DEFAULT CURRENTE_TIMESTAMP
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
 )
 """)
         
