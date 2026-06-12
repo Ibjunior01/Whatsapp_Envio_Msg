@@ -1,6 +1,8 @@
 import customtkinter as ctk
 
+from views.dashboard_view import DashboardView
 from views.contato_view import ContatoView
+from views.agendamento_view import AgendamentoView
 
 
 class MainWindow(ctk.CTk):
@@ -55,10 +57,8 @@ class MainWindow(ctk.CTk):
         )
 
         self.criar_menu()
-
-        ContatoView(
-            self.content
-        )
+        self.abrir_dashboard()
+        
 
     def criar_menu(self):
 
@@ -74,7 +74,8 @@ class MainWindow(ctk.CTk):
 
         btn_dashboard = ctk.CTkButton(
             self.sidebar,
-            text="Dashboard"
+            text="Dashboard",
+            command=self.abrir_dashboard
         )
 
         btn_dashboard.pack(
@@ -85,7 +86,8 @@ class MainWindow(ctk.CTk):
 
         btn_contatos = ctk.CTkButton(
             self.sidebar,
-            text="Contatos"
+            text="Contatos",
+            command=self.abrir_contatos
         )
 
         btn_contatos.pack(
@@ -96,11 +98,44 @@ class MainWindow(ctk.CTk):
 
         btn_agenda = ctk.CTkButton(
             self.sidebar,
-            text="Agendamentos"
+            text="Agendamentos",
+            command=self.abrir_agendamentos
         )
 
         btn_agenda.pack(
             padx=10,
             pady=5,
             fill="x"
+        )
+        
+    def limpar_conteudo(self):
+
+        for widget in self.content.winfo_children():
+            widget.destroy()
+            
+            
+# Métodos de navegação páginas
+            
+    def abrir_dashboard(self):
+
+        self.limpar_conteudo()
+
+        DashboardView(
+            self.content
+        )
+        
+    def abrir_contatos(self):
+
+        self.limpar_conteudo()
+
+        ContatoView(
+            self.content
+        )
+        
+    def abrir_agendamentos(self):
+
+        self.limpar_conteudo()
+
+        AgendamentoView(
+            self.content
         )

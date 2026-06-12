@@ -32,6 +32,7 @@ class Database:
             telefone TEXT NOT NULL UNIQUE,
             empresa TEXT,
             observacoes TEXT,
+            
             criado_em DATETIME DEFAULT CURRENT_TIMESTAMP
 )
 """)
@@ -39,13 +40,22 @@ class Database:
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS agendamentos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            contato_id INTEGER,
+            contato_id INTEGER NOT NULL,
             mensagem TEXT NOT NULL,
-            data_envio DATATIME NOT NULL,
+            data_envio TEXT NOT NULL,
+            hora_envio TEXT NOT NULL,
             status TEXT DEFAULT 'PENDENTE',
-            enviado_em DATATIME
+            
+            criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+            FOREIGN KEY(contato_id)
+            REFERENCES contatos(id)
 )
 """)
+        
+        
+        
+        
         
         conn.commit()
         conn.close()
