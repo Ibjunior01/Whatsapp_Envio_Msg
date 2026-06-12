@@ -17,9 +17,7 @@ class ContatoView(ctk.CTkFrame):
 
         self.pack(
             fill="both",
-            expand=True,
-            padx=20,
-            pady=20
+            expand=True            
         )
 
         self.criar_componentes()
