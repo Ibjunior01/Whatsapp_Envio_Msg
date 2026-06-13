@@ -146,9 +146,3 @@ class ContatoView(ctk.CTkFrame):
         print("Contato salvo!")
         
         
-        self.nome_entry.delete(0, "end")
-        self.telefone_entry.delete(0, "end")
-        
-        
-        
-    

@@ -3,12 +3,17 @@ import customtkinter as ctk
 from views.dashboard_view import DashboardView
 from views.contato_view import ContatoView
 from views.agendamento_view import AgendamentoView
+from utils.theme import Theme
 
 
 class MainWindow(ctk.CTk):
 
     def __init__(self):
         super().__init__()
+        
+        self.configure(
+            fg_color=Theme.BACKGROUND
+        )
 
         self.title(
             "WhatsApp Scheduler Pro"
@@ -34,7 +39,7 @@ class MainWindow(ctk.CTk):
 
         self.sidebar = ctk.CTkFrame(
             self,
-            width=220,
+            width=240,
             corner_radius=0
         )
 
@@ -65,11 +70,14 @@ class MainWindow(ctk.CTk):
         titulo = ctk.CTkLabel(
             self.sidebar,
             text="WhatsApp Scheduler",
-            font=("Arial", 18, "bold")
+            font=("Arial", 16, "bold")
+            #text_color=Theme.TEXT
         )
 
         titulo.pack(
-            pady=20
+            pady=20,
+            padx=15,
+            anchor="w"
         )
 
         btn_dashboard = ctk.CTkButton(
