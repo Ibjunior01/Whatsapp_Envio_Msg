@@ -4,6 +4,7 @@ from services.contato_service import ContatoService
 from services.agendamento_service import AgendamentoService
 from views.components.agendamento_card import AgendamentoCard
 from utils.theme import Theme
+from datetime import datetime
 
 
 class AgendamentoView(ctk.CTkFrame):
@@ -73,7 +74,9 @@ class AgendamentoView(ctk.CTkFrame):
         ).pack(anchor="w", padx=10)
 
         contatos = self.contato_service.listar_contatos()
-        self.contatos_map = {c["nome"]: c["id"] for c in contatos}
+        self.contatos_map = {
+            c["nome"]: c["id"] 
+            for c in contatos}
 
         self.contato_combo = ctk.CTkComboBox(
             self.form_frame,
@@ -99,13 +102,14 @@ class AgendamentoView(ctk.CTkFrame):
         # DATA
         ctk.CTkLabel(
             self.form_frame,
-            text="Data (YYYY-MM-DD)"
+            text="Data"
         ).pack(anchor="w", padx=10)
 
         self.data_entry = ctk.CTkEntry(
             self.form_frame,
             width=250,
-            placeholder_text="20-06-2026"
+            placeholder_text="20/06/2026"
+            
         )
         self.data_entry.pack(pady=(0, 10))
 
@@ -175,8 +179,19 @@ class AgendamentoView(ctk.CTkFrame):
         nome = self.contato_combo.get()
         contato_id = self.contatos_map[nome]
 
-        mensagem = self.mensagem_entry.get("1.0", "end").strip()
-        data_envio = self.data_entry.get()
+        mensagem = self.mensagem_entry.get(
+            "1.0", 
+            "end"
+            
+        ).strip()
+        
+        data_digitada = self.data_entry.get()
+
+        data_envio = datetime.strptime(
+            data_digitada,
+            "%d/%m/%Y"
+        ).strftime("%Y-%m-%d")
+
         hora_envio = self.hora_entry.get()
 
         self.agendamento_service.criar_agendamento(
@@ -191,202 +206,3 @@ class AgendamentoView(ctk.CTkFrame):
         print("Agendamento salvo!")
 
 
-    def criar_componentes(self):
-
-        titulo = ctk.CTkLabel(
-            self,
-            text="Agendamentos",
-            font=("Arial", 24, "bold")
-        )
-
-        titulo.pack(
-            pady=(20, 10)
-        )
-
-        formulario = ctk.CTkFrame(
-            self
-        )
-
-        formulario.pack(
-            padx=20,
-            pady=20,
-            fill="x"
-        )
-
-        contatos = (
-            self.contato_service
-            .listar_contatos()
-        )
-
-        self.contatos_dict = {
-            contato["nome"]: contato["id"]
-            for contato in contatos
-        }
-
-        nomes = list(
-            self.contatos_dict.keys()
-        )
-
-        ctk.CTkLabel(
-            formulario,
-            text="Contato"
-        ).pack(
-            anchor="w",
-            padx=20,
-            pady=(20, 5)
-        )
-
-        self.contato_combo = (
-            ctk.CTkComboBox(
-                formulario,
-                values=nomes,
-                width=450
-            )
-        )
-
-        self.contato_combo.pack(
-            padx=20,
-            pady=(0, 10),
-            anchor="w"
-        )
-
-        ctk.CTkLabel(
-            formulario,
-            text="Mensagem"
-        ).pack(
-            anchor="w",
-            padx=20
-        )
-
-        self.mensagem_entry = (
-            ctk.CTkTextbox(
-                formulario,
-                width=600,
-                height=120
-            )
-        )
-
-        self.mensagem_entry.pack(
-            padx=20,
-            pady=(5, 10),
-            anchor="w"
-        )
-
-        data_hora_frame = (
-            ctk.CTkFrame(
-                formulario,
-                fg_color="transparent"
-            )
-        )
-
-        data_hora_frame.pack(
-            padx=20,
-            pady=10,
-            anchor="w"
-        )
-
-        data_frame = (
-            ctk.CTkFrame(
-                data_hora_frame,
-                fg_color="transparent"
-            )
-        )
-
-        data_frame.pack(
-            side="left",
-            padx=(0, 20)
-        )
-
-        ctk.CTkLabel(
-            data_frame,
-            text="Data"
-        ).pack(
-            anchor="w"
-        )
-
-        self.data_entry = (
-            ctk.CTkEntry(
-                data_frame,
-                width=150
-            )
-        )
-
-        self.data_entry.pack()
-
-        hora_frame = (
-            ctk.CTkFrame(
-                data_hora_frame,
-                fg_color="transparent"
-            )
-        )
-
-        hora_frame.pack(
-            side="left"
-        )
-
-        ctk.CTkLabel(
-            hora_frame,
-            text="Hora"
-        ).pack(
-            anchor="w"
-        )
-
-        self.hora_entry = (
-            ctk.CTkEntry(
-                hora_frame,
-                width=120
-            )
-        )
-
-        self.hora_entry.pack()
-
-        self.btn_agendar = (
-            ctk.CTkButton(
-            formulario,
-            text="Agendar",
-            command=self.agendar
-        )
-        )
-
-        self.btn_agendar.pack(
-            padx=20,
-            pady=20,
-            anchor="w"
-        )
-        
-     
-    def agendar(self):
-
-        nome = (
-            self.contato_combo.get()
-        )
-
-        contato_id = (
-            self.contatos_dict[nome]
-        )
-
-        mensagem = (
-            self.mensagem_entry.get(
-                "1.0",
-                "end"
-            ).strip()
-        )
-
-        data_envio = (
-            self.data_entry.get()
-        )
-
-        hora_envio = (
-            self.hora_entry.get()
-        )
-
-        self.agendamento_service.criar_agendamento(
-            contato_id,
-            mensagem,
-            data_envio,
-            hora_envio
-        )
-
-        print(
-            "Agendamento salvo!"
-        )   

@@ -36,3 +36,23 @@ class AgendamentoService:
         return (
             self.repository.listar()
         )
+        
+        
+    def listar_pendentes(self):
+
+        return (
+            self.repository
+            .listar_pendentes()
+        )
+        
+
+    def atualizar_status(
+        self,
+        agendamento_id,
+        status
+    ):
+
+        self.repository.atualizar_status(
+            agendamento_id,
+            status
+        )

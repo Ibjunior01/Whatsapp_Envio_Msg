@@ -5,7 +5,7 @@ class Theme:
     BACKGROUND = "#0F172A"   # azul quase preto (mais confortável que preto puro)
 
     # Painéis / cards
-    SURFACE = "#111C2E"
+    SURFACE = "#162033"
 
     # Elementos elevados
     SURFACE_HOVER = "#162338"

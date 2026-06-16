@@ -41,6 +41,7 @@ class MainWindow(ctk.CTk):
             self,
             width=240,
             corner_radius=0
+            
         )
 
         self.sidebar.grid(
@@ -70,7 +71,8 @@ class MainWindow(ctk.CTk):
         titulo = ctk.CTkLabel(
             self.sidebar,
             text="WhatsApp Scheduler",
-            font=("Arial", 16, "bold")
+            font=("Arial", 16, "bold"),
+            justify="center"
             #text_color=Theme.TEXT
         )
 
