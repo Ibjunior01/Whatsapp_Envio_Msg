@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from utils.theme import Theme
 from services.whatsapp_service import WhatsAppService
+from datetime import datetime
 
 
 class AgendamentoCard(ctk.CTkFrame):
@@ -32,7 +33,7 @@ class AgendamentoCard(ctk.CTkFrame):
         self.pack(
             fill="x",
             padx=10,
-            pady=6
+            pady=8
         )
 
         # --- UI ---
@@ -60,9 +61,23 @@ class AgendamentoCard(ctk.CTkFrame):
         footer = ctk.CTkFrame(self, fg_color="transparent")
         footer.pack(fill="x", padx=15, pady=10)
 
+        try:
+
+            data_formatada = datetime.strptime(
+                data_hora,
+                "%Y-%m-%d %H:%M"
+            ).strftime(
+                "%d/%m/%Y %H:%M"
+            )
+
+        except:
+
+            data_formatada = data_hora
+
+
         ctk.CTkLabel(
             footer,
-            text=data_hora,
+            text=f"📅 {data_formatada}",
             text_color=Theme.TEXT_MUTED
         ).pack(side="left")
 

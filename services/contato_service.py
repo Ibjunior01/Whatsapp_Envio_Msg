@@ -28,3 +28,13 @@ class ContatoService:
 
     def listar_contatos(self):
         return self.repository.listar()
+    
+    
+    def excluir_contato(
+        self,
+        contato_id
+    ):
+
+        self.repository.excluir(
+            contato_id
+        )

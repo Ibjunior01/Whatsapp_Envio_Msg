@@ -5,6 +5,7 @@ from services.agendamento_service import AgendamentoService
 from views.components.agendamento_card import AgendamentoCard
 from utils.theme import Theme
 from datetime import datetime
+from utils.messages import Messages
 
 
 class AgendamentoView(ctk.CTkFrame):
@@ -70,8 +71,12 @@ class AgendamentoView(ctk.CTkFrame):
         # CONTATO
         ctk.CTkLabel(
             self.form_frame,
-            text="Contato"
-        ).pack(anchor="w", padx=10)
+            text="Contato",
+            text_color=Theme.TEXT,
+            font=("Arial", 12, "bold")
+        ).pack(
+            pady=(10, 5)
+        )
 
         contatos = self.contato_service.listar_contatos()
         self.contatos_map = {
@@ -81,20 +86,25 @@ class AgendamentoView(ctk.CTkFrame):
         self.contato_combo = ctk.CTkComboBox(
             self.form_frame,
             values=list(self.contatos_map.keys()),
-            width=250
+            width=320,
         )
         self.contato_combo.pack(pady=(0, 10))
 
         # MENSAGEM
         ctk.CTkLabel(
             self.form_frame,
-            text="Mensagem"
-        ).pack(anchor="w", padx=10)
+            text="Mensagem",
+            text_color=Theme.TEXT,
+            font=("Arial", 12, "bold")
+        ).pack(
+            pady=(10, 5)
+        )
 
         self.mensagem_entry = ctk.CTkTextbox(
             self.form_frame,
-            width=300,
-            height=120
+            width=320,
+            height=100
+            
             
         )
         self.mensagem_entry.pack(pady=(0, 10))
@@ -102,12 +112,16 @@ class AgendamentoView(ctk.CTkFrame):
         # DATA
         ctk.CTkLabel(
             self.form_frame,
-            text="Data"
-        ).pack(anchor="w", padx=10)
+            text="Data",
+            text_color=Theme.TEXT,
+            font=("Arial", 12, "bold")
+        ).pack(
+            pady=(10, 5)
+        )
 
         self.data_entry = ctk.CTkEntry(
             self.form_frame,
-            width=250,
+            width=320,
             placeholder_text="20/06/2026"
             
         )
@@ -116,12 +130,16 @@ class AgendamentoView(ctk.CTkFrame):
         # HORA
         ctk.CTkLabel(
             self.form_frame,
-            text="Hora (HH:MM)"
-        ).pack(anchor="w", padx=10)
+            text="Hora (HH:MM)",
+            text_color=Theme.TEXT,
+            font=("Arial", 12, "bold")
+        ).pack(
+            pady=(10, 5)
+        )
 
         self.hora_entry = ctk.CTkEntry(
             self.form_frame,
-            width=250,
+            width=320,
             placeholder_text="09:00"
         )
         self.hora_entry.pack(pady=(0, 15))
@@ -177,22 +195,64 @@ class AgendamentoView(ctk.CTkFrame):
     def agendar(self):
 
         nome = self.contato_combo.get()
+
         contato_id = self.contatos_map[nome]
 
         mensagem = self.mensagem_entry.get(
-            "1.0", 
+            "1.0",
             "end"
-            
         ).strip()
-        
+
         data_digitada = self.data_entry.get()
 
-        data_envio = datetime.strptime(
-            data_digitada,
-            "%d/%m/%Y"
-        ).strftime("%Y-%m-%d")
-
         hora_envio = self.hora_entry.get()
+
+        # Mensagem
+
+        if not mensagem:
+
+            Messages.aviso(
+                "Informe a mensagem."
+            )
+
+            return
+
+        # Data
+
+        if not data_digitada:
+
+            Messages.aviso(
+                "Informe a data."
+            )
+
+            return
+
+        # Hora
+
+        if not hora_envio:
+
+            Messages.aviso(
+                "Informe a hora."
+            )
+
+            return
+
+        try:
+
+            data_envio = datetime.strptime(
+                data_digitada,
+                "%d/%m/%Y"
+            ).strftime(
+                "%Y-%m-%d"
+            )
+
+        except ValueError:
+
+            Messages.erro(
+                "Data inválida. Utilize DD/MM/AAAA."
+            )
+
+            return
 
         self.agendamento_service.criar_agendamento(
             contato_id,
@@ -203,6 +263,23 @@ class AgendamentoView(ctk.CTkFrame):
 
         self.carregar_agendamentos()
 
-        print("Agendamento salvo!")
+        Messages.sucesso(
+            "Agendamento criado com sucesso."
+        )
+        
+        self.mensagem_entry.delete(
+            "1.0",
+            "end"
+        )
+
+        self.data_entry.delete(
+            0,
+            "end"
+        )
+
+        self.hora_entry.delete(
+            0,
+            "end"
+        )
 
 

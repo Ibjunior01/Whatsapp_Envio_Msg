@@ -97,15 +97,19 @@ class ContatoRepository:
         conn.close()
 
 # Excluir
-    def excluir(self, id):
+    def excluir(self, contato_id):
 
         conn = self.db.conectar()
+
         cursor = conn.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             DELETE FROM contatos
             WHERE id = ?
-        """, (id,))
+            """,
+            (contato_id,)
+        )
 
         conn.commit()
         conn.close()

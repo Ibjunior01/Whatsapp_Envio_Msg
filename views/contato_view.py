@@ -1,96 +1,172 @@
-
 import customtkinter as ctk
 
 from services.contato_service import (
     ContatoService
 )
 
+from utils.messages import Messages
+from utils.theme import Theme
+
+from views.components.contato_card import (
+    ContatoCard
+)
+
+
 class ContatoView(ctk.CTkFrame):
 
-    def __init__(
-        self,
-        master
-    ):
+    def __init__(self, master):
         super().__init__(master)
 
         self.service = ContatoService()
 
-        self.pack(
-            fill="both",
-            expand=True            
+        self.configure(
+            fg_color=Theme.BACKGROUND
         )
 
-        self.criar_componentes()
-        
-        self.carregar_contatos()
-        
+        self.pack(
+            fill="both",
+            expand=True
+        )
 
-    def criar_componentes(self):
+        self.grid_columnconfigure(
+            0,
+            weight=1
+        )
+
+        self.grid_columnconfigure(
+            1,
+            weight=2
+        )
+
+        self.grid_rowconfigure(
+            0,
+            weight=1
+        )
+
+        self.criar_layout()
+
+    def criar_layout(self):
+
+        # ESQUERDA
+
+        self.form_frame = ctk.CTkFrame(
+            self,
+            fg_color=Theme.SURFACE
+        )
+
+        self.form_frame.grid(
+            row=0,
+            column=0,
+            sticky="nsew",
+            padx=15,
+            pady=15
+        )
+
+        # DIREITA
+
+        self.list_frame = ctk.CTkFrame(
+            self,
+            fg_color=Theme.BACKGROUND
+        )
+
+        self.list_frame.grid(
+            row=0,
+            column=1,
+            sticky="nsew",
+            padx=(0, 15),
+            pady=15
+        )
+
+        self.criar_formulario()
+        self.criar_lista()
+
+    def criar_formulario(self):
 
         ctk.CTkLabel(
-            self,
-            text="Nome"
-        ).pack()
+            self.form_frame,
+            text="Novo Contato",
+            font=("Arial", 18, "bold"),
+            text_color=Theme.TEXT
+        ).pack(
+            pady=15
+        )
+
+        ctk.CTkLabel(
+            self.form_frame,
+            text="Nome",
+            text_color=Theme.TEXT,
+            font=("Arial", 12, "bold")
+        ).pack(
+            pady=(10, 5),
+            
+        )
 
         self.nome_entry = ctk.CTkEntry(
-            self,
-            width=300
+            self.form_frame,
+            width=320,
+            placeholder_text="Digite o nome"
         )
 
         self.nome_entry.pack(
-            pady=5
+            pady=(0, 10)
         )
 
         ctk.CTkLabel(
-            self,
-            text="Telefone"
-        ).pack()
+            self.form_frame,
+            text="Telefone",
+            text_color=Theme.TEXT,
+            font=("Arial", 12, "bold")
+        ).pack(
+            pady=(10, 5)
+        )
 
         self.telefone_entry = ctk.CTkEntry(
-            self,
-            width=300
+            self.form_frame,
+            width=320,
+            placeholder_text="(85) 99999-0000"
         )
 
         self.telefone_entry.pack(
-            pady=5
+            pady=(0, 15)
         )
         
-        
+
         ctk.CTkButton(
-            self,
+            self.form_frame,
             text="Salvar",
+            fg_color=Theme.PRIMARY,
             command=self.salvar
         ).pack(
-            pady=20
-        )
-        
-        
-        ctk.CTkLabel(
-            self,
-            text="Contatos Cadastrados",
-            font=("Arial", 16, "bold")
-        ).pack(
-            pady=(20,10)
-        )
-        
-        
-        self.lista_contatos = ctk.CTkTextbox(
-            self,
-            width=600,
-            height=250
-        )
-
-        self.lista_contatos.pack(
             pady=10
         )
-     
-     
+
+    def criar_lista(self):
+
+        ctk.CTkLabel(
+            self.list_frame,
+            text="Contatos",
+            font=("Arial", 18, "bold"),
+            text_color=Theme.TEXT
+        ).pack(
+            pady=10
+        )
+
+        self.scroll = ctk.CTkScrollableFrame(
+            self.list_frame,
+            fg_color="transparent"
+        )
+
+        self.scroll.pack(
+            fill="both",
+            expand=True
+        )
+
+        self.carregar_contatos()
+
     def carregar_contatos(self):
 
-        self.lista_contatos.delete(
-            "1.0",
-            "end"
-        )
+        for widget in self.scroll.winfo_children():
+            widget.destroy()
 
         contatos = (
             self.service.listar_contatos()
@@ -98,40 +174,45 @@ class ContatoView(ctk.CTkFrame):
 
         for contato in contatos:
 
-            texto = (
-                f"{contato['id']} - "
-                f"{contato['nome']} - "
-                f"{contato['telefone']}\n"
-            )
-
-            self.lista_contatos.insert(
-                "end",
-                texto
-            )   
-
+            ContatoCard(
+            self.scroll,
+            contato_id=contato["id"],
+            nome=contato["nome"],
+            telefone=contato["telefone"],
+            refresh_callback=self.carregar_contatos
+        )
 
     def salvar(self):
 
         nome = self.nome_entry.get()
-        telefone = self.telefone_entry.get()
+
+        telefone = (
+            self.telefone_entry.get()
+        )
 
         if not nome.strip():
-            print("Telefone obrigatório")
-            return
-        
-        if not telefone.strip():
-            print("Telefone obrigatório")
+
+            Messages.aviso(
+                "Informe o nome."
+            )
+
             return
 
+        if not telefone.strip():
+
+            Messages.aviso(
+                "Informe o telefone."
+            )
+
+            return
 
         self.service.criar_contato(
             nome,
             telefone
         )
-        
+
         self.carregar_contatos()
-        
-        
+
         self.nome_entry.delete(
             0,
             "end"
@@ -141,8 +222,7 @@ class ContatoView(ctk.CTkFrame):
             0,
             "end"
         )
-        
 
-        print("Contato salvo!")
-        
-        
+        Messages.sucesso(
+            "Contato salvo com sucesso."
+        )
